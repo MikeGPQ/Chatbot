@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { model } from "../firebase"
 import ReactMarkdown from 'react-markdown';
+import { getResponse } from "../firebase";
 
 export function ChatWindow() {
     const [messages, setMessages] = useState([
@@ -17,18 +17,16 @@ export function ChatWindow() {
 
         try {
             setLoading(true);
-            const result = await model.generateContent(input);
-            const response = await result.response;
-            const responseText = response.text();
+
+            const text = await getResponse(input)
 
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
-                text: responseText,
+                text: text,
                 isUser: false
             }]);
         } catch (error) {
-            setLoading(false);
-            console.error("Error calling Gemini API via Firebase:", error);
+            console.error("Error calling Gemini API", error);
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 text: "Sorry, I'm having trouble responding. Please try again.",
