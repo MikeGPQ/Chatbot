@@ -12,13 +12,19 @@ export function ChatWindow() {
     const enviarMensaje = async () => {
         if (!input.trim()) return; 
         const userMessage = { id: Date.now(), text: input, isUser: true };
-        setMessages(prev => [...prev, userMessage]);
+        const updatedMessages = [...messages, userMessage];
+        setMessages(updatedMessages);
         setInput("");
 
         try {
             setLoading(true);
 
-            const text = await getResponse(input)
+            const content = updatedMessages.map(msg => ({
+            role: msg.isUser ? 'user' : 'model',
+            parts: [{ text: msg.text }],
+            }));
+
+            const text = await getResponse(content)
 
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
