@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatWindow } from "./componentes/ChatWindow";
 
 function App() {
@@ -29,6 +29,15 @@ function App() {
 
     const [currentButtonStyle, setCurrentButtonStyle] = useState(buttonStyles);
 
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     return (
         <div style={{fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",width: "100vw", margin: "0 auto", padding: "2rem",  height: "100vh", backgroundColor: "#f5f5f5"}}>
             <h1 style={{ color: "#151E48",fontWeight: "300",  letterSpacing: "1px", marginBottom: "2rem"}}>
@@ -44,7 +53,7 @@ function App() {
                 {open ? "Close Chat" : "Open Chat"}
             </button>
 
-            {open && <ChatWindow />}
+            {open && <ChatWindow isMobile={isMobile}/>}
         </div>
     )
 }

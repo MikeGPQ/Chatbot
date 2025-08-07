@@ -2,12 +2,11 @@ import { useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import { getResponse } from "../firebase";
 
-export function ChatWindow() {
-    const [messages, setMessages] = useState([
-        { id: 1, text: "Hello! How can I help you?", isUser: false },
-    ]);
-    const [input, setInput] = useState("");
-    const [loading, setLoading] = useState(false);
+export function ChatWindow(isMobile) {
+    //FUNCIONES
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") enviarMensaje();
+    };
 
     const enviarMensaje = async () => {
         if (!input.trim()) return; 
@@ -43,6 +42,7 @@ export function ChatWindow() {
         }
     };
 
+    //ESTILOS
     const MarkdownComponents = {
         p: ({ node, ...props }) => <p style={{ margin: 0, padding: 0 }} {...props} />,
         h1: ({ node, ...props }) => <h1 style={{ margin: 0, padding: 0, fontSize: '1.2em' }} {...props} />,
@@ -63,10 +63,6 @@ export function ChatWindow() {
         ),
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === "Enter") enviarMensaje();
-    };
-
     const messageStyles = (isUser) => ({
         maxWidth: "80%",
         padding: "12px 16px",
@@ -78,6 +74,19 @@ export function ChatWindow() {
         whiteSpace: "pre-line",    
         wordBreak: "break-word"
     });
+
+    const chatWindowStyles = {
+        position: "fixed",
+        bottom: isMobile ? "0" : "20px",
+        right: isMobile ? "0" : "20px",
+        width: isMobile ? "25vw" : "350px",
+        height: isMobile ? "60vh" : "500px",
+        borderRadius: isMobile ? "12px 12px 0 0" : "12px",
+        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+    };
 
     const buttonStyles = {
         backgroundColor: "#151E48",
@@ -94,10 +103,20 @@ export function ChatWindow() {
         backgroundColor: "#0E152E"
     };
 
+    //VARIABLES
+    const [messages, setMessages] = useState([
+        { id: 1, text: "Hello! How can I help you?", isUser: false },
+    ]);
+    const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false);
     const [currentButtonStyle, setCurrentButtonStyle] = useState(buttonStyles);
+    
 
     return (
-        <div style={{  position: "fixed", bottom: "20px",right: "20px", width: "350px", borderRadius: "12px", boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",  overflow: "hidden",display: "flex", flexDirection: "column", height: "500px"}}>
+
+        
+
+        <div style={chatWindowStyles}>
             <div style={{ gap: "10px", display: "flex", backgroundColor: "#151E48", color: "white",  padding: "15px 20px", fontSize: "1.1rem", fontWeight: "500"}}>
                 Support Chat
                 {loading && <span style={{ fontSize: "0.9rem", opacity: 0.8 }}>Loading...</span>}
