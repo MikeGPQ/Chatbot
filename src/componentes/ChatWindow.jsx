@@ -2,7 +2,7 @@ import { useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import { getResponse } from "../firebase";
 
-export function ChatWindow(isMobile) {
+export function ChatWindow({isMobile}) {
     //FUNCIONES
     const handleKeyPress = (e) => {
         if (e.key === "Enter") enviarMensaje();
@@ -79,7 +79,7 @@ export function ChatWindow(isMobile) {
         position: "fixed",
         bottom: isMobile ? "0" : "20px",
         right: isMobile ? "0" : "20px",
-        width: isMobile ? "25vw" : "350px",
+        width: isMobile ? "100vw" : "350px",
         height: isMobile ? "60vh" : "500px",
         borderRadius: isMobile ? "12px 12px 0 0" : "12px",
         boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
