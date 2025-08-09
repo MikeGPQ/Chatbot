@@ -1,16 +1,16 @@
 import { useState } from "react";
 import ReactMarkdown from 'react-markdown';
-import { getResponse } from "../firebase";
+import { getResponse } from "../Gemini";
 
 export function ChatWindow({isMobile}) {
-    //FUNCIONES
     const handleKeyPress = (e) => {
         if (e.key === "Enter") enviarMensaje();
     };
 
     const enviarMensaje = async () => {
-        if (!input.trim()) return; 
-        const userMessage = { id: Date.now(), text: input, isUser: true };
+        if (!input.trim()) return;
+
+        const userMessage = { role: "user", parts:[{text:input}]};
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setInput("");
@@ -18,24 +18,23 @@ export function ChatWindow({isMobile}) {
         try {
             setLoading(true);
 
-            const content = updatedMessages.map(msg => ({
-            role: msg.isUser ? 'user' : 'model',
-            parts: [{ text: msg.text }],
-            }));
+            console.log("Contents being sent to API:", userMessage);
 
-            const text = await getResponse(content)
+            const text = await getResponse(userMessage);
 
             setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: text,
-                isUser: false
+                role: "model",
+                parts:[{
+                    text: text
+                }]
             }]);
         } catch (error) {
             console.error("Error calling Gemini API", error);
             setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                text: "Sorry, I'm having trouble responding. Please try again.",
-                isUser: false
+                role: "model",
+                parts:[{
+                    text: "Sorry, I'm having trouble responding. Please try again"
+                }]
             }]);
         } finally {
             setLoading(false);
@@ -63,13 +62,13 @@ export function ChatWindow({isMobile}) {
         ),
     };
 
-    const messageStyles = (isUser) => ({
+    const messageStyles = (role) => ({
         maxWidth: "80%",
         padding: "12px 16px",
-        borderRadius: isUser ? "18px 18px 0 18px" : "18px 18px 18px 0",
-        backgroundColor: isUser ? "#ED1C24" : "#124E78",
+        borderRadius: role==="user" ? "18px 18px 0 18px" : "18px 18px 18px 0",
+        backgroundColor: role==="user" ? "#ED1C24" : "#124E78",
         color: "white",
-        alignSelf: isUser ? "flex-end" : "flex-start",
+        alignSelf: role==="user" ? "flex-end" : "flex-start",
         boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
         whiteSpace: "pre-line",    
         wordBreak: "break-word"
@@ -105,7 +104,7 @@ export function ChatWindow({isMobile}) {
 
     //VARIABLES
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hello! How can I help you?", isUser: false },
+        { role:"model", parts:[{text:"Hi how may I help you?"}]},
     ]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
@@ -113,9 +112,6 @@ export function ChatWindow({isMobile}) {
     
 
     return (
-
-        
-
         <div style={chatWindowStyles}>
             <div style={{ gap: "10px", display: "flex", backgroundColor: "#151E48", color: "white",  padding: "15px 20px", fontSize: "1.1rem", fontWeight: "500"}}>
                 Support Chat
@@ -123,13 +119,13 @@ export function ChatWindow({isMobile}) {
             </div>
 
             <div style={{ flex: "1", padding: "20px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "15px", backgroundColor: "#F8F9FA" }}>
-                {messages.map(message => (
+                {messages.map((message,index) => (
                     <div
-                        key={message.id}
-                        style={messageStyles(message.isUser)}
+                        key={index}
+                        style={messageStyles(message.role)}
                     >
                         <ReactMarkdown components={MarkdownComponents}>
-                            {message.text}
+                            {message.parts[0].text}
                         </ReactMarkdown>
                     </div>
                 ))}
