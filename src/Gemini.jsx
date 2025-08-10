@@ -1,17 +1,16 @@
 import {GoogleGenAI, Type } from '@google/genai';
-import { getData } from './firestore';
+import {getProperties} from "./firestore"
 
 const ai = new GoogleGenAI({
     apiKey: import.meta.env.VITE_API_KEY,
 });
 
-function searchProperties(area,budget,propertyType){
-    try{
-      console.log("Si entre ", area, budget, propertyType);
-      //const allProperties = await getData("Properties");
-      //const formatedProperties = JSON.stringify(filteredProperties.slice(0, 3), null, 2);
+async function searchProperties({area,budget,propertyType}){
+  try{
+      const properties = await getProperties(area,budget,propertyType);
+      return properties;
     }catch(e){
-        console.error(e);
+        return ("Cant conect with Firebase" + e);
     }
 }
 
@@ -117,8 +116,24 @@ export async function getResponse(message) {
     const functionCall = response.functionCalls[0]; 
     console.log(`Function to call: ${functionCall.name}`);
     console.log(`Arguments: ${JSON.stringify(functionCall.args)}`);
-    return "FUNCIONO CHECA EL LOG";
-    // const result = await createBarChart(functionCall.args);
+    const result = await searchProperties(functionCall.args);
+
+    if(result.length >0){
+      let formattedResponse = "Here are some properties that match your criteria:\n";
+      result.forEach(property=>{
+        formattedResponse += `${property.Description}\n`;
+        formattedResponse += `* **Area:** ${property.Area}\n`;
+        formattedResponse += `* **Price:** ${property.Price} ${property.PriceCurrency}\n`;
+        formattedResponse += `* **SubType:** ${property.SubType}\n`;
+        formattedResponse += `* **Rooms and Bathrooms:** ${property.Bedrooms} Bedrooms ${property.Bathrooms} Bathrooms\n`;
+        formattedResponse += `* **Amenities:** ${property.Amenities}\n`;
+        formattedResponse += `* **Total Area:** ${property.TotalArea} m²\n`;
+      });
+      formattedResponse += "\nDo you wanna know more about any particular property ? Or do you want to check out more of what we got for you ?";
+      return formattedResponse;
+    }else{
+      return "Sorry there are no properties that match your request. Want to start another request ?";
+    }
   } else {
     return response.text;
   }
