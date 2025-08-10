@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ChatWindow } from "./componentes/ChatWindow";
+import LOGO from "./assets/LOGO.png"
 
 function App() {
     const [open, setOpen] = useState(false);
@@ -17,7 +18,11 @@ function App() {
         fontSize: "1rem",
         cursor: "pointer",
         transition: "all 0.3s ease",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        zIndex: "100"
     };
 
     const buttonHoverStyles = {
@@ -38,12 +43,46 @@ function App() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    return (
-        <div style={{fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",width: "100vw", margin: "0 auto", padding: "2rem",  height: "100vh", backgroundColor: "#f5f5f5"}}>
-            <h1 style={{ color: "#151E48",fontWeight: "300",  letterSpacing: "1px", marginBottom: "2rem"}}>
-                Support
-            </h1>
+    const containerStyles = {
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "#f5f5f5",
+        padding: "0"
+    };
 
+    const headerStyles = {
+        backgroundColor: "#ED1C24",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        padding: "1rem 2rem",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
+    };
+
+    const logoStyles = {
+        width: "120px",
+        height: "auto",
+        marginRight: "1.5rem"
+    };
+
+    const headingStyles = {
+        fontWeight: "400",
+        letterSpacing: "0.5px",
+        fontSize: "2rem",
+        margin: "0",
+        color: "white"
+    };
+
+    return (
+        <div style={containerStyles}>
+            <div style={headerStyles}>
+                <img src={LOGO} alt="Top Mexico Real Estate Logo" style={logoStyles} />
+                <h1 style={headingStyles}>
+                    Support
+                </h1>
+            </div>
+            
             <button
                 style={currentButtonStyle}
                 onClick={openChat}

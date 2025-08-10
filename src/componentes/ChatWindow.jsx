@@ -62,6 +62,24 @@ export function ChatWindow({isMobile}) {
         ),
     };
 
+    const chatWindowStyles = {
+            position: "fixed",
+            bottom: "80px",
+            right: "20px",
+            width: "350px",
+            height: "450px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            borderRadius: "10px",
+            backgroundColor: "white",
+            transition: "all 0.3s ease",
+            zIndex: "99",
+            display: "flex", 
+            flexDirection: "column", 
+            justifyContent: "space-between",
+            borderRadius: "15px", 
+            overflow: "hidden" 
+        };
+
     const messageStyles = (role) => ({
         maxWidth: "80%",
         padding: "12px 16px",
@@ -73,19 +91,6 @@ export function ChatWindow({isMobile}) {
         whiteSpace: "pre-line",    
         wordBreak: "break-word"
     });
-
-    const chatWindowStyles = {
-        position: "fixed",
-        bottom: isMobile ? "0" : "20px",
-        right: isMobile ? "0" : "20px",
-        width: isMobile ? "100vw" : "350px",
-        height: isMobile ? "60vh" : "500px",
-        borderRadius: isMobile ? "12px 12px 0 0" : "12px",
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-    };
 
     const buttonStyles = {
         backgroundColor: "#151E48",
